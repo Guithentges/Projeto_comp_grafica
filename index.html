@@ -122,7 +122,9 @@ function drawWheel(x, y) {
   ctx.restore();
 }
 
-//Desenhar o background
+// =====================
+// BACKGROUND
+// =====================
 function drawBackground() {
   ctx.fillStyle = "#87CEEB";
   ctx.fillRect(0, 0, canvas.width, canvas.height - 350);
@@ -133,27 +135,34 @@ function drawBackground() {
   ctx.fill();
 
   function drawCloud(x, y) {
-  ctx.fillStyle = "white";
+    ctx.fillStyle = "white";
 
-  ctx.beginPath();
-  ctx.arc(x, y, 20, 0, Math.PI * 2);
-  ctx.arc(x + 25, y, 25, 0, Math.PI * 2);
-  ctx.arc(x + 55, y, 20, 0, Math.PI * 2);
-  ctx.fill();
-}
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    ctx.arc(x + 25, y, 25, 0, Math.PI * 2);
+    ctx.arc(x + 55, y, 20, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   drawCloud(150, 100);
   drawCloud(400, 80);
   drawCloud(700, 120);
 }
 
 // =====================
-// DESENHAR CARRO
+// DESENHAR CARRO (COM REFLEXÃO)
 // =====================
 function drawCar() {
   ctx.save();
 
   ctx.translate(posX, posY);
-  ctx.scale(zoom, zoom);
+
+  // 🔥 REFLEXÃO + ESCALA
+  if (movingLeft) {
+    ctx.scale(-zoom, zoom); // espelha
+  } else {
+    ctx.scale(zoom, zoom);  // normal
+  }
 
   ctx.fillStyle = "red";
   ctx.fillRect(-60, -40, 120, 40);
@@ -180,18 +189,14 @@ function draw() {
   drawBackground();
   drawRoad();
 
-  // Movimento
   if (movingRight) posX += velocidade;
   if (movingLeft) posX -= velocidade;
 
-  // Rotação das rodas
   if (movingRight) angle += velocidade / wheelRadius;
   if (movingLeft) angle -= velocidade / wheelRadius;
 
-  // 🔥 SCALE DINÂMICO (baseado na velocidade)
   zoom = 0.8 + (velocidade * 0.2);
 
-  // Loop da tela
   const margem = 80;
 
   if (posX > canvas.width + margem) posX = -margem;
@@ -202,7 +207,6 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-// Responsividade
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
