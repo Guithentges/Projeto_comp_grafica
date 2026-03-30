@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Carro 2D</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: green;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// =====================
+// VARIÁVEIS
+// =====================
+let posX = canvas.width / 2;
+let posY = canvas.height - 150;
+
+let velocidade = 1;
+let maxVel = 5;
+let minVel = 1;
+
+let angle = 0;
+let zoom = 1;
+
+let movingRight = false;
+let movingLeft = false;
+
+const wheelRadius = 20;
+
+// =====================
+// CONTROLES
+// =====================
+document.addEventListener("keydown", (e) => {
+
+  if (e.key === "ArrowRight") movingRight = true;
+  if (e.key === "ArrowLeft") movingLeft = true;
+
+  if (e.key === "ArrowUp") {
+    if (velocidade < maxVel) velocidade++;
+  }
+
+  if (e.key === "ArrowDown") {
+    if (velocidade > minVel) velocidade--;
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  if (e.key === "ArrowRight") movingRight = false;
+  if (e.key === "ArrowLeft") movingLeft = false;
+});
+
+// =====================
+// DESENHAR ESTRADA
+// =====================
+function drawRoad() {
+  const roadHeight = 180;
+
+  ctx.fillStyle = "#333";
+  ctx.fillRect(0, canvas.height - roadHeight, canvas.width, roadHeight);
+
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 4;
+  ctx.setLineDash([30, 20]);
+
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height - roadHeight / 2);
+  ctx.lineTo(canvas.width, canvas.height - roadHeight / 2);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+
+  ctx.strokeStyle = "#555";
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height - roadHeight);
+  ctx.lineTo(canvas.width, canvas.height - roadHeight);
+  ctx.stroke();
+}
+
+// =====================
+// DESENHAR RODA
+// =====================
+function drawWheel(x, y) {
+  ctx.save();
+
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+
+  ctx.fillStyle = "black";
+  ctx.beginPath();
+  ctx.arc(0, 0, wheelRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "white";
+  ctx.beginPath();
+  ctx.arc(0, 0, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+
+  for (let i = 0; i < 4; i++) {
+    ctx.rotate(Math.PI / 2);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(wheelRadius * 0.6, 0);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+//Desenhar o background
+function drawBackground() {
+  ctx.fillStyle = "#87CEEB";
+  ctx.fillRect(0, 0, canvas.width, canvas.height - 350);
+
+  ctx.fillStyle = "yellow";
+  ctx.beginPath();
+  ctx.arc(canvas.width - 100, 100, 70, 0, Math.PI * 2);
+  ctx.fill();
+
+  function drawCloud(x, y) {
+  ctx.fillStyle = "white";
+
+  ctx.beginPath();
+  ctx.arc(x, y, 20, 0, Math.PI * 2);
+  ctx.arc(x + 25, y, 25, 0, Math.PI * 2);
+  ctx.arc(x + 55, y, 20, 0, Math.PI * 2);
+  ctx.fill();
+}
+  drawCloud(150, 100);
+  drawCloud(400, 80);
+  drawCloud(700, 120);
+}
+
+// =====================
+// DESENHAR CARRO
+// =====================
+function drawCar() {
+  ctx.save();
+
+  ctx.translate(posX, posY);
+  ctx.scale(zoom, zoom);
+
+  ctx.fillStyle = "red";
+  ctx.fillRect(-60, -40, 120, 40);
+
+  ctx.fillStyle = "red";
+  ctx.fillRect(-50, -70, 85, 30);
+
+  ctx.fillStyle = "black";
+  ctx.fillRect(-5, -65, 35, 25);
+
+  drawWheel(-40, 0);
+  drawWheel(40, 0);
+
+  ctx.restore();
+}
+
+// =====================
+// LOOP PRINCIPAL
+// =====================
+function draw() {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawBackground();
+  drawRoad();
+
+  // Movimento
+  if (movingRight) posX += velocidade;
+  if (movingLeft) posX -= velocidade;
+
+  // Rotação das rodas
+  if (movingRight) angle += velocidade / wheelRadius;
+  if (movingLeft) angle -= velocidade / wheelRadius;
+
+  // 🔥 SCALE DINÂMICO (baseado na velocidade)
+  zoom = 0.8 + (velocidade * 0.2);
+
+  // Loop da tela
+  const margem = 80;
+
+  if (posX > canvas.width + margem) posX = -margem;
+  if (posX < -margem) posX = canvas.width + margem;
+
+  drawCar();
+
+  requestAnimationFrame(draw);
+}
+
+// Responsividade
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+draw();
+</script>
+
+</body>
+</html>
