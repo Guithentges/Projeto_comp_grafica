@@ -23,10 +23,10 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let posX = canvas.width / 2;
-let posY = canvas.height - 150;
+let posY = canvas.height - 250;
 
-let velocidade = 1;
-let maxVel = 5;
+let velocidade = 2;
+let maxVel = 4;
 let minVel = 1;
 
 let angle = 0;
@@ -61,7 +61,7 @@ document.addEventListener("keyup", (e) => {
 
 //Desenhar a estrada
 function drawRoad() {
-  const roadHeight = 180;
+  const roadHeight = 300;
 
   ctx.fillStyle = "#333";
   ctx.fillRect(0, canvas.height - roadHeight, canvas.width, roadHeight);
@@ -118,7 +118,7 @@ function drawWheel(x, y) {
 //Fundo
 function drawBackground() {
   ctx.fillStyle = "#87CEEB";
-  ctx.fillRect(0, 0, canvas.width, canvas.height - 350);
+  ctx.fillRect(0, 0, canvas.width, canvas.height - 450);
 
   ctx.fillStyle = "yellow";
   ctx.beginPath();
@@ -181,7 +181,13 @@ function drawCar() {
   ctx.translate(posX, posY);
 
   if (movingLeft) {
-    ctx.scale(-zoom, zoom); 
+    ctx.scale(-zoom, zoom);
+    if(velocidade > 1){
+        ctx.translate(0, 110);
+    }else{
+
+        ctx.translate(0, 150);
+    } 
   } else {
     ctx.scale(zoom, zoom);  
   }
@@ -230,7 +236,7 @@ function draw() {
   if (movingRight) angle += velocidade / wheelRadius;
   if (movingLeft) angle -= velocidade / wheelRadius;
 
-  zoom = 0.8 + (velocidade * 0.2);
+  zoom = 1 + (velocidade * 0.2);
 
   const margem = 80;
 
