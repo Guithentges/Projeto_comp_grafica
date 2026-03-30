@@ -22,9 +22,6 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// =====================
-// VARIÁVEIS
-// =====================
 let posX = canvas.width / 2;
 let posY = canvas.height - 150;
 
@@ -40,9 +37,7 @@ let movingLeft = false;
 
 const wheelRadius = 20;
 
-// =====================
-// CONTROLES
-// =====================
+//Controlar o carro
 document.addEventListener("keydown", (e) => {
 
   if (e.key === "ArrowRight") movingRight = true;
@@ -62,9 +57,7 @@ document.addEventListener("keyup", (e) => {
   if (e.key === "ArrowLeft") movingLeft = false;
 });
 
-// =====================
-// DESENHAR ESTRADA
-// =====================
+//Desenhar a estrada
 function drawRoad() {
   const roadHeight = 180;
 
@@ -89,9 +82,7 @@ function drawRoad() {
   ctx.stroke();
 }
 
-// =====================
-// DESENHAR RODA
-// =====================
+//Desenhar as rodas
 function drawWheel(x, y) {
   ctx.save();
 
@@ -122,9 +113,7 @@ function drawWheel(x, y) {
   ctx.restore();
 }
 
-// =====================
-// BACKGROUND
-// =====================
+//Fundo
 function drawBackground() {
   ctx.fillStyle = "#87CEEB";
   ctx.fillRect(0, 0, canvas.width, canvas.height - 350);
@@ -149,19 +138,16 @@ function drawBackground() {
   drawCloud(700, 120);
 }
 
-// =====================
-// DESENHAR CARRO (COM REFLEXÃO)
-// =====================
+//Desenhar o carro
 function drawCar() {
   ctx.save();
 
   ctx.translate(posX, posY);
 
-  // 🔥 REFLEXÃO + ESCALA
   if (movingLeft) {
-    ctx.scale(-zoom, zoom); // espelha
+    ctx.scale(-zoom, zoom); 
   } else {
-    ctx.scale(zoom, zoom);  // normal
+    ctx.scale(zoom, zoom);  
   }
 
   ctx.fillStyle = "red";
@@ -179,9 +165,7 @@ function drawCar() {
   ctx.restore();
 }
 
-// =====================
-// LOOP PRINCIPAL
-// =====================
+//Loop da animação
 function draw() {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
