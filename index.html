@@ -37,6 +37,8 @@ let movingLeft = false;
 
 const wheelRadius = 20;
 
+let smokes = [];
+
 //Controlar o carro
 document.addEventListener("keydown", (e) => {
 
@@ -138,6 +140,40 @@ function drawBackground() {
   drawCloud(700, 120);
 }
 
+//Criar fumaça do escapamento
+function createSmoke() {
+  smokes.push({
+    x: -10,
+    y: 0,
+    size: 5,
+    alpha: 0.5
+  });
+}
+
+//Desenhar a fumaça do escapamento
+function drawSmoke() {
+  for (let i = 0; i < smokes.length; i++) {
+    let s = smokes[i];
+
+    ctx.save();
+    ctx.globalAlpha = s.alpha;
+
+    ctx.fillStyle = "gray";
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+    s.x -= 1.5;
+    s.y -= 0.2;
+
+    s.size += 0.1;
+    s.alpha -= 0.02;
+  }
+
+  smokes = smokes.filter(s => s.alpha > 0);
+}
+
 //Desenhar o carro
 function drawCar() {
   ctx.save();
@@ -162,6 +198,21 @@ function drawCar() {
   drawWheel(-40, 0);
   drawWheel(40, 0);
 
+  //Escapamento e fumaça
+  ctx.save();
+
+  ctx.translate(-60, -20);
+
+  ctx.fillStyle = "black";
+  ctx.fillRect(-12, -5, 12, 10);
+
+  if (movingRight || movingLeft) {
+    createSmoke();
+  }
+
+  drawSmoke();
+
+  ctx.restore();
   ctx.restore();
 }
 
